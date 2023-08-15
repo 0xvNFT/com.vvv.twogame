@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/galaxy_bg">
+
+    <RelativeLayout
+        android:id="@+id/relative1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="160dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/game1_img"
+            android:layout_width="wrap_content"
+            android:layout_height="120dp"
+            android:src="@drawable/game1_img"
+            tools:ignore="ContentDescription" />
+
+        <ImageView
+            android:id="@+id/game1_play"
+            android:layout_width="wrap_content"
+            android:layout_height="100dp"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="150dp"
+            android:src="@drawable/game1_play"
+            tools:ignore="ContentDescription" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/relative2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/relative1">
+
+        <ImageView
+            android:id="@+id/game2_img"
+            android:layout_width="wrap_content"
+            android:layout_height="120dp"
+            android:src="@drawable/game2_img"
+            tools:ignore="ContentDescription" />
+
+        <ImageView
+            android:id="@+id/game2_play"
+            android:layout_width="wrap_content"
+            android:layout_height="100dp"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="150dp"
+            android:src="@drawable/game2_play"
+            tools:ignore="ContentDescription" />
+    </RelativeLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
