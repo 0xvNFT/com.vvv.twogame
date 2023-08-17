@@ -37,7 +37,7 @@ public class GameView extends View {
     };
     private final int PLAYER_IMAGE_WIDTH = 100;
     private final int PLAYER_IMAGE_HEIGHT = 100;
-    private final int PROJECTILE_IMAGE_WIDTH = 80;
+    private final int PROJECTILE_IMAGE_WIDTH = 50;
     private final int PROJECTILE_IMAGE_HEIGHT = 100;
     public Projectile projectiles;
     private final Player player;
@@ -77,11 +77,11 @@ public class GameView extends View {
             @Override
             public void run() {
                 fireProjectile();
-                firingHandler.postDelayed(this, 300);
+                firingHandler.postDelayed(this, 400);
                 invalidate();
             }
         };
-        firingHandler.postDelayed(firingRunnable, 300);
+        firingHandler.postDelayed(firingRunnable, 400);
     }
 
     @Override
@@ -127,7 +127,7 @@ public class GameView extends View {
     }
 
     private void fireProjectile() {
-        int playerX = player.getX() + player.getCurrentImage().getWidth() / 10;
+        int playerX = player.getX() + player.getCurrentImage().getWidth() / 4;
         int playerY = player.getY();
         int speed = 20;
         Projectile newProjectile = new Projectile(projectileImages, playerX, playerY, speed, chosenProjectileIndex);
