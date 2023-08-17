@@ -20,6 +20,12 @@
             android:name=".ChooseGameActivity"
             android:exported="false" />
         <activity
+            android:name=".gameone.SpaceShooterActivity"
+            android:exported="false" />
+        <activity
+            android:name=".game2.WhackAMoleActivity"
+            android:exported="false" />
+        <activity
             android:name=".SplashActivity"
             android:exported="true">
             <intent-filter>
