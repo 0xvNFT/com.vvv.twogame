@@ -93,7 +93,7 @@ public class GameView extends View {
             originalEnemyImage.recycle();
         }
 
-        player = new Player(playerImages, screenWidth, screenHeight);
+        player = new Player(playerImages, screenWidth, screenHeight, 3);
 
         chosenProjectileIndex = new Random().nextInt(projectileImages.length);
         projectiles = new Projectile(projectileImages, screenWidth, screenHeight, 0, chosenProjectileIndex);
@@ -111,10 +111,10 @@ public class GameView extends View {
             @Override
             public void run() {
                 spawnEnemy();
-                firingHandler.postDelayed(this, 400);
+                firingHandler.postDelayed(this, 300);
             }
         };
-        firingHandler.postDelayed(enemySpawningRunnable, 400);
+        firingHandler.postDelayed(enemySpawningRunnable, 300);
     }
 
     @Override
@@ -163,6 +163,19 @@ public class GameView extends View {
                     projectileIterator.remove();
                     break;
                 }
+            }
+            if (player.checkCollision(projectile)) {
+                player.decreaseHealth(1);
+                projectileIterator.remove();
+            }
+        }
+        Iterator<Enemy> enemyIterator = activeEnemies.iterator();
+        while (enemyIterator.hasNext()) {
+            Enemy enemy = enemyIterator.next();
+
+            if (player.checkCollision(enemy)) {
+                player.decreaseHealth(1);
+                enemyIterator.remove();
             }
         }
     }

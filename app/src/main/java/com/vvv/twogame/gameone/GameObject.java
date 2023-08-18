@@ -1,6 +1,7 @@
 package com.vvv.twogame.gameone;
 
 import android.graphics.Canvas;
+import android.graphics.Rect;
 
 public abstract class GameObject {
     protected int x, y;
@@ -29,5 +30,9 @@ public abstract class GameObject {
     public void setY(int y) {
         this.y = y;
     }
+
+    public abstract boolean checkCollision(GameObject other);
+
+    public abstract Rect getBoundingBox();
 }
 

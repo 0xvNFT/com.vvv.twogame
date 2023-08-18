@@ -30,6 +30,11 @@ public class Enemy extends GameObject implements Collidable {
                     projectile.getX() + PROJECTILE_IMAGE_WIDTH, projectile.getY() + PROJECTILE_IMAGE_HEIGHT);
             return Rect.intersects(enemyRect, projectileRect);
         }
+        if (other instanceof Player) {
+            Player player = (Player) other;
+            //player.decreaseHealth(1);
+            return Rect.intersects(enemyRect, player.getBoundingBox());
+        }
         return false;
     }
 
@@ -42,5 +47,9 @@ public class Enemy extends GameObject implements Collidable {
     public void draw(Canvas canvas) {
         canvas.drawBitmap(enemyImage, x, y, null);
 
+    }
+
+    public Rect getBoundingBox() {
+        return new Rect(x, y, x + ENEMY_IMAGE_WIDTH, y + ENEMY_IMAGE_HEIGHT);
     }
 }

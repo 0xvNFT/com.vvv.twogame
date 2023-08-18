@@ -2,12 +2,13 @@ package com.vvv.twogame.gameone;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Rect;
 
 public class Projectile extends GameObject implements Collidable {
     private final Bitmap[] projectileImages;
-    private Bitmap currentImage;
+    private final Bitmap currentImage;
 
-    private int speed;
+    private final int speed;
 
     public Projectile(Bitmap[] projectileImages, int x, int y, int speed, int chosenIndex) {
         super(x, y);
@@ -35,10 +36,8 @@ public class Projectile extends GameObject implements Collidable {
         return false;
     }
 
-    public void fire(int startX, int startY, int speed, int chosenIndex) {
-        this.x = startX;
-        this.y = startY;
-        this.speed = speed;
-        this.currentImage = projectileImages[chosenIndex];
+    @Override
+    public Rect getBoundingBox() {
+        return new Rect(x, y, x + currentImage.getWidth(), y + currentImage.getHeight());
     }
 }
