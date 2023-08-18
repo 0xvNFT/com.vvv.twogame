@@ -51,6 +51,7 @@ public class GameView extends View {
     private final Bitmap[] enemyImages;
     private final ScoreManager scoreManager;
     private final Paint scorePaint;
+    private final TimerManager timerManager;
 
     public GameView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -129,17 +130,26 @@ public class GameView extends View {
 
         scoreManager = new ScoreManager();
         scorePaint = new Paint();
-
+        timerManager = new TimerManager();
     }
 
     public ScoreManager getScoreManager() {
         return scoreManager;
     }
 
+    public TimerManager getTimerManager() {
+        return timerManager;
+    }
+
     @Override
     protected void onDraw(@NonNull Canvas canvas) {
         super.onDraw(canvas);
-        scoreManager.drawScore(canvas, scorePaint);
+        scoreManager.drawScore(canvas);
+        timerManager.update();
+        timerManager.draw(canvas);
+        if (timerManager.isTimeUp()) {
+            timerManager.resetTimer();
+        }
 
         player.update();
         player.draw(canvas);

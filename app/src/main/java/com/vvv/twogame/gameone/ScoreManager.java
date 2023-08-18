@@ -19,7 +19,8 @@ public class ScoreManager {
         score += amount;
     }
 
-    public void drawScore(Canvas canvas, Paint paint) {
+    public void drawScore(Canvas canvas) {
+        Paint paint = new Paint();
         paint.setColor(Color.WHITE);
         paint.setTextSize(48);
         canvas.drawText("Score: " + score, 20, 50, paint);
