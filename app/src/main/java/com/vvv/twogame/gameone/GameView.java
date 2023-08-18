@@ -92,8 +92,8 @@ public class GameView extends View {
             enemyImages[i] = Bitmap.createScaledBitmap(originalEnemyImage, ENEMY_IMAGE_WIDTH, ENEMY_IMAGE_HEIGHT, false);
             originalEnemyImage.recycle();
         }
-
-        player = new Player(playerImages, screenWidth, screenHeight, 3);
+        //remove context if you want to use number as health
+        player = new Player(context, playerImages, screenWidth, screenHeight, 3);
 
         chosenProjectileIndex = new Random().nextInt(projectileImages.length);
         projectiles = new Projectile(projectileImages, screenWidth, screenHeight, 0, chosenProjectileIndex);
