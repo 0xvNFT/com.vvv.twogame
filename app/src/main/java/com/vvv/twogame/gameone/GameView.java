@@ -4,10 +4,17 @@ import static com.vvv.twogame.gameone.Constants.ENEMY_IMAGE_HEIGHT;
 import static com.vvv.twogame.gameone.Constants.ENEMY_IMAGE_WIDTH;
 import static com.vvv.twogame.gameone.Constants.ENEMY_SCREEN_HEIGHT;
 import static com.vvv.twogame.gameone.Constants.ENEMY_SCREEN_WIDTH;
+import static com.vvv.twogame.gameone.Constants.ENEMY_SPAWN_DELAY;
+import static com.vvv.twogame.gameone.Constants.ENEMY_SPEED_MAX;
+import static com.vvv.twogame.gameone.Constants.ENEMY_SPEED_MIN;
+import static com.vvv.twogame.gameone.Constants.HEART_COUNT;
+import static com.vvv.twogame.gameone.Constants.MAX_HEARTS;
 import static com.vvv.twogame.gameone.Constants.PLAYER_IMAGE_HEIGHT;
 import static com.vvv.twogame.gameone.Constants.PLAYER_IMAGE_WIDTH;
+import static com.vvv.twogame.gameone.Constants.PROJECTILE_FIRING_DELAY;
 import static com.vvv.twogame.gameone.Constants.PROJECTILE_IMAGE_HEIGHT;
 import static com.vvv.twogame.gameone.Constants.PROJECTILE_IMAGE_WIDTH;
+import static com.vvv.twogame.gameone.Constants.PROJECTILE_SPEED;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -27,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 public class GameView extends View {
@@ -93,28 +101,28 @@ public class GameView extends View {
             originalEnemyImage.recycle();
         }
         //remove context if you want to use number as health
-        player = new Player(context, playerImages, screenWidth, screenHeight, 3);
+        player = new Player(context, playerImages, screenWidth, screenHeight, HEART_COUNT, MAX_HEARTS);
 
         chosenProjectileIndex = new Random().nextInt(projectileImages.length);
-        projectiles = new Projectile(projectileImages, screenWidth, screenHeight, 0, chosenProjectileIndex);
+        projectiles = new Projectile(projectileImages, screenWidth, screenHeight, PROJECTILE_SPEED, chosenProjectileIndex);
 
         projectileFiringRunnable = new Runnable() {
             @Override
             public void run() {
                 fireProjectile();
-                firingHandler.postDelayed(this, 400);
+                firingHandler.postDelayed(this, PROJECTILE_FIRING_DELAY);
             }
         };
-        firingHandler.postDelayed(projectileFiringRunnable, 400);
+        firingHandler.postDelayed(projectileFiringRunnable, PROJECTILE_FIRING_DELAY);
 
         enemySpawningRunnable = new Runnable() {
             @Override
             public void run() {
                 spawnEnemy();
-                firingHandler.postDelayed(this, 300);
+                firingHandler.postDelayed(this, ENEMY_SPAWN_DELAY);
             }
         };
-        firingHandler.postDelayed(enemySpawningRunnable, 300);
+        firingHandler.postDelayed(enemySpawningRunnable, ENEMY_SPAWN_DELAY);
     }
 
     @Override
@@ -216,19 +224,19 @@ public class GameView extends View {
     private void fireProjectile() {
         int playerX = player.getX() + player.getCurrentImage().getWidth() / 4;
         int playerY = player.getY();
-        int speed = 20;
-        Projectile newProjectile = new Projectile(projectileImages, playerX, playerY, speed, chosenProjectileIndex);
+        AtomicInteger speed = new AtomicInteger(PROJECTILE_SPEED);
+        Projectile newProjectile = new Projectile(projectileImages, playerX, playerY, speed.get(), chosenProjectileIndex);
         activeProjectiles.add(newProjectile);
     }
 
     private void resetFiringTimer() {
         firingHandler.removeCallbacks(projectileFiringRunnable);
-        firingHandler.postDelayed(projectileFiringRunnable, 400);
+        firingHandler.postDelayed(projectileFiringRunnable, PROJECTILE_FIRING_DELAY);
     }
 
     private void resetEnemySpawningTimer() {
         firingHandler.removeCallbacks(enemySpawningRunnable);
-        firingHandler.postDelayed(enemySpawningRunnable, 1000);
+        firingHandler.postDelayed(enemySpawningRunnable, ENEMY_SPAWN_DELAY);
     }
 
     private void spawnEnemy() {
@@ -236,9 +244,9 @@ public class GameView extends View {
 
         int enemyX = new Random().nextInt(screenWidth - ENEMY_SCREEN_WIDTH);
         int enemyY = -ENEMY_SCREEN_HEIGHT;
-        int minSpeed = 5;
-        int maxSpeed = 15;
-        int speed = new Random().nextInt(maxSpeed - minSpeed + 1) + minSpeed;
+        int minSpeed = ENEMY_SPEED_MIN;
+        AtomicInteger maxSpeed = new AtomicInteger(ENEMY_SPEED_MAX);
+        int speed = new Random().nextInt(maxSpeed.get() - minSpeed + 1) + minSpeed;
 
         int chosenEnemyIndex = new Random().nextInt(enemyImages.length);
         Enemy newEnemy = new Enemy(enemyImages[chosenEnemyIndex], enemyX, enemyY, speed);
