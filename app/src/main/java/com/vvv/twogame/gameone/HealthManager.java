@@ -1,5 +1,7 @@
 package com.vvv.twogame.gameone;
 
+import static com.vvv.twogame.gameone.Constants.BLINK_DURATION;
+
 public class HealthManager {
     private final int maxHealth;
     private int currentHealth;
@@ -54,7 +56,7 @@ public class HealthManager {
             long currentTime = System.currentTimeMillis();
             long elapsedTime = currentTime - blinkStartTime;
 
-            if (elapsedTime >= 3000) {
+            if (elapsedTime >= BLINK_DURATION) {
                 isBlinking = false;
             }
         }
