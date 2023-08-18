@@ -21,14 +21,16 @@ public class Player extends GameObject implements Collidable {
     private final Bitmap currentImage;
     private final Context context;
     private final HealthManager healthManager;
+    private final GameView gameView;
 
-    public Player(Context context, Bitmap[] playerImages, int screenWidth, int screenHeight, int initialHealth, int maxHealth) {
+    public Player(Context context, Bitmap[] playerImages, int screenWidth, int screenHeight, int initialHealth, int maxHealth, GameView gameView) {
         super((screenWidth - playerImages[0].getWidth()) / 2, screenHeight - playerImages[0].getHeight());
         this.context = context;
         this.currentImage = playerImages[new Random().nextInt(playerImages.length)];
         this.x = (screenWidth - currentImage.getWidth()) / 2;
         this.y = screenHeight - currentImage.getHeight();
         this.healthManager = new HealthManager(initialHealth, maxHealth);
+        this.gameView = gameView;
     }
 
     public void decreaseHealth(int amount) {
@@ -40,12 +42,19 @@ public class Player extends GameObject implements Collidable {
             }
         }
     }
+
     public Bitmap getCurrentImage() {
         return currentImage;
     }
+
     public void update() {
         //healthManager.isBlinking();
     }
+
+    public void increaseScore(int amount) {
+        gameView.getScoreManager().increaseScore(amount);
+    }
+
     public void draw(Canvas canvas) {
         if (!healthManager.isBlinking() || (System.currentTimeMillis() - healthManager.getBlinkStartTime()) % 400 < 200) {
             canvas.drawBitmap(currentImage, x, y, null);

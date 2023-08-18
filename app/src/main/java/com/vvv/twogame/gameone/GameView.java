@@ -20,6 +20,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
@@ -48,6 +49,8 @@ public class GameView extends View {
     private final List<Projectile> activeProjectiles = new ArrayList<>();
     private final List<Enemy> activeEnemies = new ArrayList<>();
     private final Bitmap[] enemyImages;
+    private final ScoreManager scoreManager;
+    private final Paint scorePaint;
 
     public GameView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -101,7 +104,7 @@ public class GameView extends View {
             originalEnemyImage.recycle();
         }
         //remove context if you want to use number as health
-        player = new Player(context, playerImages, screenWidth, screenHeight, HEART_COUNT, MAX_HEARTS);
+        player = new Player(context, playerImages, screenWidth, screenHeight, HEART_COUNT, MAX_HEARTS, this);
 
         chosenProjectileIndex = new Random().nextInt(projectileImages.length);
         projectiles = new Projectile(projectileImages, screenWidth, screenHeight, PROJECTILE_SPEED, chosenProjectileIndex);
@@ -123,11 +126,20 @@ public class GameView extends View {
             }
         };
         firingHandler.postDelayed(enemySpawningRunnable, ENEMY_SPAWN_DELAY);
+
+        scoreManager = new ScoreManager();
+        scorePaint = new Paint();
+
+    }
+
+    public ScoreManager getScoreManager() {
+        return scoreManager;
     }
 
     @Override
     protected void onDraw(@NonNull Canvas canvas) {
         super.onDraw(canvas);
+        scoreManager.drawScore(canvas, scorePaint);
 
         player.update();
         player.draw(canvas);
@@ -169,6 +181,7 @@ public class GameView extends View {
                 if (enemy.checkCollision(projectile)) {
                     enemyIterator.remove();
                     projectileIterator.remove();
+                    player.increaseScore(1);
                     break;
                 }
             }
