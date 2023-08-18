@@ -15,7 +15,9 @@ import java.util.Random;
 public class Player extends GameObject implements Collidable {
     private final Bitmap currentImage;
     private int health;
-    private final Context context; // Add this member variable
+    private final Context context;
+    private boolean isBlinking = false;
+    private long blinkStartTime = 0;
 
     public Player(Context context, Bitmap[] playerImages, int screenWidth, int screenHeight, int initialHealth) {
         super((screenWidth - playerImages[0].getWidth()) / 2, screenHeight - playerImages[0].getHeight());
@@ -31,9 +33,15 @@ public class Player extends GameObject implements Collidable {
     }
 
     public void decreaseHealth(int amount) {
-        health -= amount;
-        if (health < 0) {
-            health = 0;
+        if (!isBlinking) {
+            health -= amount;
+            if (health < 0) {
+                health = 0;
+            }
+            if (health > 0) {
+                isBlinking = true;
+                blinkStartTime = System.currentTimeMillis();
+            }
         }
     }
 
@@ -42,10 +50,20 @@ public class Player extends GameObject implements Collidable {
     }
 
     public void update() {
+        if (isBlinking) {
+            long currentTime = System.currentTimeMillis();
+            long elapsedTime = currentTime - blinkStartTime;
+
+            if (elapsedTime >= 3000) {
+                isBlinking = false;
+            }
+        }
     }
 
     public void draw(Canvas canvas) {
-        canvas.drawBitmap(currentImage, x, y, null);
+        if (!isBlinking || (System.currentTimeMillis() - blinkStartTime) % 400 < 200) {
+            canvas.drawBitmap(currentImage, x, y, null);
+        }
 
         int heartWidth = 35;
         int heartHeight = 35;
