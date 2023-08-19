@@ -23,7 +23,7 @@
             android:name=".gameone.SpaceShooterActivity"
             android:exported="false" />
         <activity
-            android:name=".game2.WhackAMoleActivity"
+            android:name=".gametwo.WhackAMoleActivity"
             android:exported="false" />
         <activity
             android:name=".SplashActivity"

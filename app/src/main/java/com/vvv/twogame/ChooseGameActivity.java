@@ -8,8 +8,8 @@ import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.vvv.twogame.game2.WhackAMoleActivity;
 import com.vvv.twogame.gameone.SpaceShooterActivity;
+import com.vvv.twogame.gametwo.WhackAMoleActivity;
 
 public class ChooseGameActivity extends AppCompatActivity {
 

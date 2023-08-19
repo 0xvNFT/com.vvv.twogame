@@ -1,4 +1,4 @@
-package com.vvv.twogame.game2;
+package com.vvv.twogame.gametwo;
 
 import android.os.Bundle;
 
