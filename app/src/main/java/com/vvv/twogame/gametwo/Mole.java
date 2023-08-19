@@ -2,7 +2,7 @@ package com.vvv.twogame.gametwo;
 
 import android.graphics.Canvas;
 
-public class Mole extends GameObjectWAM {
+public class Mole extends GameObject {
     private boolean isVisible;
 
     public Mole(int x, int y) {

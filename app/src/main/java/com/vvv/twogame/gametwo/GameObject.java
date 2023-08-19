@@ -2,10 +2,10 @@ package com.vvv.twogame.gametwo;
 
 import android.graphics.Canvas;
 
-public class GameObjectWAM {
+public class GameObject {
     protected int x, y;
 
-    public GameObjectWAM(int x, int y) {
+    public GameObject(int x, int y) {
         this.x = x;
         this.y = y;
     }
