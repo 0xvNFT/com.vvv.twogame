@@ -21,6 +21,7 @@ public class Player extends GameObject implements Collidable {
     private final Bitmap currentImage;
     private final Context context;
     private final HealthManager healthManager;
+    private final ScoreManager scoreManager;
     private final GameView gameView;
 
     public Player(Context context, Bitmap[] playerImages, int screenWidth, int screenHeight, int initialHealth, int maxHealth, GameView gameView) {
@@ -30,6 +31,7 @@ public class Player extends GameObject implements Collidable {
         this.x = (screenWidth - currentImage.getWidth()) / 2;
         this.y = screenHeight - currentImage.getHeight();
         this.healthManager = new HealthManager(initialHealth, maxHealth);
+        this.scoreManager = new ScoreManager();
         this.gameView = gameView;
     }
 
@@ -95,5 +97,13 @@ public class Player extends GameObject implements Collidable {
 
     public Rect getBoundingBox() {
         return new Rect(x, y, x + currentImage.getWidth(), y + currentImage.getHeight());
+    }
+
+    public int getScore() {
+        return ScoreManager.getScore();
+    }
+
+    public int getHealth() {
+        return healthManager.getCurrentHealth();
     }
 }

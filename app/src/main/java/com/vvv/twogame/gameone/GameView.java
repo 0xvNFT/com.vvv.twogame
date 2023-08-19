@@ -212,6 +212,10 @@ public class GameView extends View {
                 player.decreaseHealth(1);
                 projectileIterator.remove();
             }
+            if (player.getHealth() <= 0) {
+                showGameOverDialog(player.getScore());
+                isGameActive = false;
+            }
         }
         Iterator<Enemy> enemyIterator = activeEnemies.iterator();
         while (enemyIterator.hasNext()) {
@@ -296,16 +300,13 @@ public class GameView extends View {
     }
 
     private void showRulesDialog() {
-        DialogInterface.OnClickListener onProceedClickListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                isRulesDialogShown = true;
-                isGameActive = true;
-                fireProjectiles = true;
-                canSpawnEnemies = true;
-                Log.d("GameView", "Start Game button clicked. Rules shown: " + true + ", Game active: " + true);
+        DialogInterface.OnClickListener onProceedClickListener = (dialog, which) -> {
+            isRulesDialogShown = true;
+            isGameActive = true;
+            fireProjectiles = true;
+            canSpawnEnemies = true;
+            Log.d("GameView", "Start Game button clicked. Rules shown: " + true + ", Game active: " + true);
 
-            }
         };
         ShowRulesDialog dialog = new ShowRulesDialog(getContext(), onProceedClickListener);
         dialog.show();
@@ -313,18 +314,27 @@ public class GameView extends View {
 
     private void showLevelCompleteDialog() {
 
-        DialogInterface.OnClickListener onProceedClickListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                ((Activity) getContext()).finish();
+        DialogInterface.OnClickListener onProceedClickListener = (dialog, which) -> {
+            ((Activity) getContext()).finish();
 
-                Intent intent = new Intent(getContext(), SpaceShooterActivity.class);
-                getContext().startActivity(intent);
-                isGameActive = true;
-            }
+            Intent intent = new Intent(getContext(), SpaceShooterActivity.class);
+            getContext().startActivity(intent);
+            isGameActive = true;
         };
 
         LevelCompleteDialog dialog = new LevelCompleteDialog(getContext(), ScoreManager.getScore(), onProceedClickListener);
         dialog.show();
+    }
+
+    private void showGameOverDialog(int finalScore) {
+        DialogInterface.OnClickListener onRestartClickListener = (dialog, which) -> resetGame();
+        GameOverDialog dialog = new GameOverDialog(getContext(), onRestartClickListener);
+        dialog.show(finalScore);
+    }
+
+    private void resetGame() {
+        ((Activity) getContext()).finish();
+        Intent intent = new Intent(getContext(), SpaceShooterActivity.class);
+        getContext().startActivity(intent);
     }
 }
