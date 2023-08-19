@@ -19,7 +19,7 @@ public class TimerManager {
     private void setRandomDuration() {
         int[] durations = {30, 45, 60, 80, 100};
         int randomIndex = new Random().nextInt(durations.length);
-        duration = durations[randomIndex] * 1000; // Convert to milliseconds
+        duration = durations[randomIndex] * 1000;
         remainingTime = duration;
     }
 
@@ -28,7 +28,7 @@ public class TimerManager {
         remainingTime = duration - (currentTime - startTime);
 
         if (remainingTime <= 0) {
-            setRandomDuration();
+            //setRandomDuration();
             startTime = currentTime;
         }
     }

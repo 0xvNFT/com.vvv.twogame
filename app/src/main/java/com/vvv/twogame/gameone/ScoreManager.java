@@ -5,13 +5,13 @@ import android.graphics.Color;
 import android.graphics.Paint;
 
 public class ScoreManager {
-    private int score;
+    private static int score;
 
     public ScoreManager() {
-        this.score = 0;
+        score = 0;
     }
 
-    public int getScore() {
+    public static int getScore() {
         return score;
     }
 

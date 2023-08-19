@@ -16,7 +16,10 @@ import static com.vvv.twogame.gameone.Constants.PROJECTILE_IMAGE_HEIGHT;
 import static com.vvv.twogame.gameone.Constants.PROJECTILE_IMAGE_WIDTH;
 import static com.vvv.twogame.gameone.Constants.PROJECTILE_SPEED;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -24,6 +27,7 @@ import android.graphics.Paint;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -39,7 +43,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 
 public class GameView extends View {
-    public Projectile projectiles;
+    public final Paint scorePaint;
     private final Player player;
     private final Bitmap[] projectileImages;
     private final int chosenProjectileIndex;
@@ -50,12 +54,17 @@ public class GameView extends View {
     private final List<Enemy> activeEnemies = new ArrayList<>();
     private final Bitmap[] enemyImages;
     private final ScoreManager scoreManager;
-    private final Paint scorePaint;
     private final TimerManager timerManager;
+    public Projectile projectiles;
+    private boolean isGameActive = false;
+    private boolean isRulesDialogShown = false;
+    private boolean fireProjectiles = false;
+    private boolean canSpawnEnemies = false;
+
 
     public GameView(Context context, AttributeSet attrs) {
         super(context, attrs);
-
+        showRulesDialog();
         DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
         int screenWidth = displayMetrics.widthPixels;
         int screenHeight = displayMetrics.heightPixels;
@@ -104,7 +113,7 @@ public class GameView extends View {
             enemyImages[i] = Bitmap.createScaledBitmap(originalEnemyImage, ENEMY_IMAGE_WIDTH, ENEMY_IMAGE_HEIGHT, false);
             originalEnemyImage.recycle();
         }
-        //remove context if you want to use number as health
+        //remove context if you want to use number as health -jayson
         player = new Player(context, playerImages, screenWidth, screenHeight, HEART_COUNT, MAX_HEARTS, this);
 
         chosenProjectileIndex = new Random().nextInt(projectileImages.length);
@@ -144,38 +153,42 @@ public class GameView extends View {
     @Override
     protected void onDraw(@NonNull Canvas canvas) {
         super.onDraw(canvas);
-        scoreManager.drawScore(canvas);
-        timerManager.update();
-        timerManager.draw(canvas);
-        if (timerManager.isTimeUp()) {
-            timerManager.resetTimer();
-        }
+        if (isRulesDialogShown && isGameActive) {
+            scoreManager.drawScore(canvas);
+            timerManager.update();
+            timerManager.draw(canvas);
+            if (timerManager.isTimeUp()) {
+                showLevelCompleteDialog();
+                timerManager.resetTimer();
+                isGameActive = false;
 
-        player.update();
-        player.draw(canvas);
-
-        Iterator<Projectile> projectileIterator = activeProjectiles.iterator();
-        while (projectileIterator.hasNext()) {
-            Projectile projectile = projectileIterator.next();
-            projectile.update();
-            projectile.draw(canvas);
-
-            if (projectile.getY() < 0) {
-                projectileIterator.remove();
             }
-        }
-        Iterator<Enemy> enemyIterator = activeEnemies.iterator();
-        while (enemyIterator.hasNext()) {
-            Enemy enemy = enemyIterator.next();
-            enemy.update();
-            enemy.draw(canvas);
 
-            if (enemy.getY() > getHeight()) {
-                enemyIterator.remove();
+            player.update();
+            player.draw(canvas);
+
+            Iterator<Projectile> projectileIterator = activeProjectiles.iterator();
+            while (projectileIterator.hasNext()) {
+                Projectile projectile = projectileIterator.next();
+                projectile.update();
+                projectile.draw(canvas);
+
+                if (projectile.getY() < 0) {
+                    projectileIterator.remove();
+                }
             }
-        }
-        checkCollisions();
+            Iterator<Enemy> enemyIterator = activeEnemies.iterator();
+            while (enemyIterator.hasNext()) {
+                Enemy enemy = enemyIterator.next();
+                enemy.update();
+                enemy.draw(canvas);
 
+                if (enemy.getY() > getHeight()) {
+                    enemyIterator.remove();
+                }
+            }
+            checkCollisions();
+        }
         invalidate();
     }
 
@@ -245,6 +258,9 @@ public class GameView extends View {
     }
 
     private void fireProjectile() {
+        if (!fireProjectiles) {
+            return;
+        }
         int playerX = player.getX() + player.getCurrentImage().getWidth() / 4;
         int playerY = player.getY();
         AtomicInteger speed = new AtomicInteger(PROJECTILE_SPEED);
@@ -263,6 +279,9 @@ public class GameView extends View {
     }
 
     private void spawnEnemy() {
+        if (!canSpawnEnemies) {
+            return;
+        }
         int screenWidth = getWidth();
 
         int enemyX = new Random().nextInt(screenWidth - ENEMY_SCREEN_WIDTH);
@@ -274,5 +293,38 @@ public class GameView extends View {
         int chosenEnemyIndex = new Random().nextInt(enemyImages.length);
         Enemy newEnemy = new Enemy(enemyImages[chosenEnemyIndex], enemyX, enemyY, speed);
         activeEnemies.add(newEnemy);
+    }
+
+    private void showRulesDialog() {
+        DialogInterface.OnClickListener onProceedClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                isRulesDialogShown = true;
+                isGameActive = true;
+                fireProjectiles = true;
+                canSpawnEnemies = true;
+                Log.d("GameView", "Start Game button clicked. Rules shown: " + true + ", Game active: " + true);
+
+            }
+        };
+        ShowRulesDialog dialog = new ShowRulesDialog(getContext(), onProceedClickListener);
+        dialog.show();
+    }
+
+    private void showLevelCompleteDialog() {
+
+        DialogInterface.OnClickListener onProceedClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                ((Activity) getContext()).finish();
+
+                Intent intent = new Intent(getContext(), SpaceShooterActivity.class);
+                getContext().startActivity(intent);
+                isGameActive = true;
+            }
+        };
+
+        LevelCompleteDialog dialog = new LevelCompleteDialog(getContext(), ScoreManager.getScore(), onProceedClickListener);
+        dialog.show();
     }
 }
