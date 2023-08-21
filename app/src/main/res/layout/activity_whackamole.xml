@@ -2,7 +2,12 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/wam_bg">
 
-    >
+    <com.vvv.twogame.gametwo.GameView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </com.vvv.twogame.gametwo.GameView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

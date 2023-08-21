@@ -2,7 +2,7 @@ package com.vvv.twogame.gametwo;
 
 import android.graphics.Canvas;
 
-public class GameObject {
+public abstract class GameObject {
     protected int x, y;
 
     public GameObject(int x, int y) {
