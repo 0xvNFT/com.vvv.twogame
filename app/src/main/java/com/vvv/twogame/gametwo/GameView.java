@@ -3,6 +3,8 @@ package com.vvv.twogame.gametwo;
 import static com.vvv.twogame.gametwo.Constants.BOMB_HEIGHT;
 import static com.vvv.twogame.gametwo.Constants.BOMB_WIDTH;
 import static com.vvv.twogame.gametwo.Constants.COLUMN_SPACING;
+import static com.vvv.twogame.gametwo.Constants.HAMMER_HEIGHT;
+import static com.vvv.twogame.gametwo.Constants.HAMMER_WIDTH;
 import static com.vvv.twogame.gametwo.Constants.HOLE_FRONT_HEIGHT;
 import static com.vvv.twogame.gametwo.Constants.HOLE_FRONT_WIDTH;
 import static com.vvv.twogame.gametwo.Constants.HOLE_HEIGHT;
@@ -38,6 +40,8 @@ public class GameView extends View {
     private final Handler handler = new Handler();
     private final Runnable moleRunnable;
     private final Runnable bombRunnable;
+    private final Hammer hammer;
+
 
     public GameView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -55,6 +59,8 @@ public class GameView extends View {
         int bombHeight = BOMB_HEIGHT;
         int columnSpacing = COLUMN_SPACING;
         int rowSpacing = ROW_SPACING;
+        int hammerWidth = HAMMER_WIDTH;
+        int hammerHeight = HAMMER_HEIGHT;
 
         int totalWidth = NUM_COLUMNS * holeWidth + (NUM_COLUMNS - 1) * columnSpacing;
         int startX = (screenWidth - totalWidth) / 2;
@@ -63,6 +69,8 @@ public class GameView extends View {
         Bitmap moleBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.mole_alive);
         Bitmap holeFrontBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.hole_front);
         Bitmap bombBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.bomb);
+        Bitmap hammerBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.hammer);
+        hammer = new Hammer(hammerBitmap, hammerWidth, hammerHeight);
 
         holes = new ArrayList<>();
         moles = new ArrayList<>();
@@ -180,6 +188,7 @@ public class GameView extends View {
     protected void onDraw(Canvas canvas) {
         for (int row = 0; row < Constants.NUM_ROWS; row++) {
             for (int col = 0; col < Constants.NUM_COLUMNS; col++) {
+
                 Hole hole = holes.get(row * Constants.NUM_COLUMNS + col);
                 hole.draw(canvas);
 
@@ -191,6 +200,7 @@ public class GameView extends View {
 
                 HoleFront holeFront = holesFront.get(row * Constants.NUM_COLUMNS + col);
                 holeFront.draw(canvas);
+                hammer.draw(canvas);
             }
         }
     }
@@ -201,6 +211,9 @@ public class GameView extends View {
         if (action == MotionEvent.ACTION_DOWN) {
             float touchX = event.getX();
             float touchY = event.getY();
+
+            hammer.show((int) touchX, (int) touchY);
+
             for (Mole mole : moles) {
                 if (mole.contains(touchX, touchY)) {
                     mole.whack();
@@ -213,6 +226,9 @@ public class GameView extends View {
                     invalidate();
                 }
             }
+        } else if (action == MotionEvent.ACTION_UP) {
+            hammer.hide();
+            invalidate();
         }
         return true;
     }
