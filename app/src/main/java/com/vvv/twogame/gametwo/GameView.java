@@ -173,7 +173,6 @@ public class GameView extends View {
             }
         };
         handler.postDelayed(bombRunnable, 1500);
-
     }
 
 

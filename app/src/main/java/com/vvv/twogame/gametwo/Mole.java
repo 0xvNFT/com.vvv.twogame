@@ -58,11 +58,11 @@ public class Mole extends GameObject {
 
     @Override
     public int getWidth() {
-        return 0;
+        return moleBitmap.getWidth();
     }
 
     @Override
     public int getHeight() {
-        return 0;
+        return moleBitmap.getHeight();
     }
 }
