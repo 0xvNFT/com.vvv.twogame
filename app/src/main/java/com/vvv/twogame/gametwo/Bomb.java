@@ -49,5 +49,18 @@ public class Bomb extends GameObject {
         // Check if the touch coordinates are within the bounds of the bomb
         return touchX >= left && touchX <= right && touchY >= top && touchY <= bottom;
     }
+
+    public void setPosition(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public int getWidth() {
+        return bombBitmap.getWidth();
+    }
+
+    public int getHeight() {
+        return bombBitmap.getHeight();
+    }
 }
 

@@ -37,7 +37,6 @@ public class GameView extends View {
 
     private final Handler handler = new Handler();
     private final Runnable moleRunnable;
-
     private final Runnable bombRunnable;
 
     public GameView(Context context, AttributeSet attrs) {
@@ -137,24 +136,44 @@ public class GameView extends View {
         bombRunnable = new Runnable() {
             @Override
             public void run() {
-                List<Bomb> hiddenBombs = new ArrayList<>();
+                int visibleBombCount = 0;
                 for (Bomb bomb : bombs) {
-                    if (!bomb.isVisible()) {
-                        hiddenBombs.add(bomb);
+                    if (bomb.isVisible()) {
+                        visibleBombCount++;
                     }
                 }
 
-                if (!hiddenBombs.isEmpty()) {
-                    int randomIndex = new Random().nextInt(hiddenBombs.size());
-                    Bomb bombToShow = hiddenBombs.get(randomIndex);
-                    bombToShow.show();
+                if (visibleBombCount < 3) {
+                    List<Bomb> hiddenBombs = new ArrayList<>();
+                    for (Bomb bomb : bombs) {
+                        if (!bomb.isVisible()) {
+                            hiddenBombs.add(bomb);
+                        }
+                    }
+
+                    if (!hiddenBombs.isEmpty()) {
+                        int randomIndex = new Random().nextInt(hiddenBombs.size());
+                        Bomb bombToShow = hiddenBombs.get(randomIndex);
+                        bombToShow.show();
+
+                        int randomInterval = new Random().nextInt(4) + 1;
+                        int intervalMillis = randomInterval * 1500;
+
+                        handler.postDelayed(() -> {
+                            bombToShow.hide();
+                            invalidate();
+                            handler.postDelayed(this, intervalMillis);
+                        }, intervalMillis);
+                    }
                 }
 
                 invalidate();
                 handler.postDelayed(this, 1500);
+
             }
         };
         handler.postDelayed(bombRunnable, 1500);
+
     }
 
 

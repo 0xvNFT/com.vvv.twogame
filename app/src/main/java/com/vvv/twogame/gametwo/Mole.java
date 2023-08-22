@@ -49,4 +49,20 @@ public class Mole extends GameObject {
 
         return touchX >= left && touchX <= right && touchY >= top && touchY <= bottom;
     }
+
+    @Override
+    public void setPosition(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    @Override
+    public int getWidth() {
+        return 0;
+    }
+
+    @Override
+    public int getHeight() {
+        return 0;
+    }
 }

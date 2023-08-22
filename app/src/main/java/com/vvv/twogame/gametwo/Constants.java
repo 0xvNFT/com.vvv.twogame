@@ -5,8 +5,6 @@ public class Constants {
     public static final int NUM_COLUMNS = 3;
     public static final int COLUMN_SPACING = 30;
     public static final int ROW_SPACING = 80;
-    public static final int COLUMN_FRONT_SPACING = 30;
-    public static final int ROW_FRONT_SPACING = 65;
     public static final int HOLE_WIDTH = 200;
     public static final int HOLE_HEIGHT = 100;
     public static final int HOLE_FRONT_WIDTH = 200;

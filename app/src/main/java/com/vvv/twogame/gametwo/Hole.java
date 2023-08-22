@@ -16,6 +16,25 @@ public class Hole extends GameObject {
         canvas.drawBitmap(holeBitmap, x, y, null);
     }
 
+    @Override
+    public boolean contains(float touchX, float touchY) {
+        return false;
+    }
+
+    @Override
+    public void setPosition(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
     public void update() {
+    }
+
+    public int getHeight() {
+        return holeBitmap.getHeight();
+    }
+
+    public int getWidth() {
+        return holeBitmap.getWidth();
     }
 }
