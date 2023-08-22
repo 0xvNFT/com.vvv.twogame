@@ -13,5 +13,7 @@ public class Constants {
     public static final int HOLE_FRONT_HEIGHT = 50;
     public static final int MOLE_WIDTH = 100;
     public static final int MOLE_HEIGHT = 100;
+    public static final int BOMB_WIDTH = 100;
+    public static final int BOMB_HEIGHT = 100;
 
 }

@@ -1,5 +1,7 @@
 package com.vvv.twogame.gametwo;
 
+import static com.vvv.twogame.gametwo.Constants.BOMB_HEIGHT;
+import static com.vvv.twogame.gametwo.Constants.BOMB_WIDTH;
 import static com.vvv.twogame.gametwo.Constants.COLUMN_SPACING;
 import static com.vvv.twogame.gametwo.Constants.HOLE_FRONT_HEIGHT;
 import static com.vvv.twogame.gametwo.Constants.HOLE_FRONT_WIDTH;
@@ -31,8 +33,12 @@ public class GameView extends View {
     private final List<Hole> holes;
     private final List<HoleFront> holesFront;
     private final List<Mole> moles;
+    private final List<Bomb> bombs;
+
     private final Handler handler = new Handler();
     private final Runnable moleRunnable;
+
+    private final Runnable bombRunnable;
 
     public GameView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -46,35 +52,46 @@ public class GameView extends View {
         int holeFrontHeight = HOLE_FRONT_HEIGHT;
         int moleWidth = MOLE_WIDTH;
         int moleHeight = MOLE_HEIGHT;
+        int bombWidth = BOMB_WIDTH;
+        int bombHeight = BOMB_HEIGHT;
         int columnSpacing = COLUMN_SPACING;
         int rowSpacing = ROW_SPACING;
 
         int totalWidth = NUM_COLUMNS * holeWidth + (NUM_COLUMNS - 1) * columnSpacing;
         int startX = (screenWidth - totalWidth) / 2;
+
         Bitmap holeBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.hole_half);
         Bitmap moleBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.mole_alive);
         Bitmap holeFrontBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.hole_front);
+        Bitmap bombBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.bomb);
+
         holes = new ArrayList<>();
         moles = new ArrayList<>();
         holesFront = new ArrayList<>();
+        bombs = new ArrayList<>();
 
         for (int row = 0; row < NUM_ROWS; row++) {
             for (int col = 0; col < NUM_COLUMNS; col++) {
+                //holes
                 int holeX = startX + col * (holeWidth + columnSpacing);
                 int holeY = screenHeight - (row + 1) * (holeHeight + rowSpacing);
                 Hole hole = new Hole(holeX, holeY, holeBitmap, holeWidth, holeHeight);
                 holes.add(hole);
-
-
+                //moles
                 int moleX = holeX + (holeWidth - moleWidth) / 2;
                 int moleY = holeY + (holeHeight - moleHeight) / 2;
                 Mole mole = new Mole(moleX, moleY, moleBitmap, moleWidth, moleHeight);
                 moles.add(mole);
-
+                //holesFront as mask
                 int holeFrontX = holeX + (holeWidth - holeFrontWidth) / 2;
                 int holeFrontY = moleY + (moleHeight - holeFrontHeight) + 5;
                 HoleFront holeFront = new HoleFront(holeFrontX, holeFrontY, holeFrontBitmap, holeFrontWidth, holeFrontHeight);
                 holesFront.add(holeFront);
+                //bombs
+                int bombX = holeX + (holeWidth - bombWidth) / 2;
+                int bombY = holeY + (holeHeight - bombHeight) / 2;
+                Bomb bomb = new Bomb(bombX, bombY, bombBitmap, bombWidth, bombHeight);
+                bombs.add(bomb);
             }
         }
         moleRunnable = new Runnable() {
@@ -117,6 +134,27 @@ public class GameView extends View {
             }
         };
         handler.postDelayed(moleRunnable, 1500);
+        bombRunnable = new Runnable() {
+            @Override
+            public void run() {
+                List<Bomb> hiddenBombs = new ArrayList<>();
+                for (Bomb bomb : bombs) {
+                    if (!bomb.isVisible()) {
+                        hiddenBombs.add(bomb);
+                    }
+                }
+
+                if (!hiddenBombs.isEmpty()) {
+                    int randomIndex = new Random().nextInt(hiddenBombs.size());
+                    Bomb bombToShow = hiddenBombs.get(randomIndex);
+                    bombToShow.show();
+                }
+
+                invalidate();
+                handler.postDelayed(this, 1500);
+            }
+        };
+        handler.postDelayed(bombRunnable, 1500);
     }
 
 
@@ -129,6 +167,10 @@ public class GameView extends View {
 
                 Mole mole = moles.get(row * Constants.NUM_COLUMNS + col);
                 mole.draw(canvas);
+
+                Bomb bomb = bombs.get(row * Constants.NUM_COLUMNS + col);
+                bomb.draw(canvas);
+
                 HoleFront holeFront = holesFront.get(row * Constants.NUM_COLUMNS + col);
                 holeFront.draw(canvas);
             }
@@ -145,7 +187,12 @@ public class GameView extends View {
                 if (mole.contains(touchX, touchY)) {
                     mole.whack();
                     invalidate();
-
+                }
+            }
+            for (Bomb bomb : bombs) {
+                if (bomb.contains(touchX, touchY)) {
+                    bomb.detonate();
+                    invalidate();
                 }
             }
         }
