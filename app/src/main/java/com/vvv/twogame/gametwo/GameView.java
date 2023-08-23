@@ -20,8 +20,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
@@ -47,15 +45,17 @@ public class GameView extends View {
     private final Hammer hammer;
     private final Health health;
     private final ScoreManager scoreManager;
-
+    private final TimerManager timerManager;
 
     public GameView(Context context, AttributeSet attrs) {
         super(context, attrs);
         DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
         int screenWidth = displayMetrics.widthPixels;
         int screenHeight = displayMetrics.heightPixels;
+
         health = new Health(MAX_HEALTH);
         scoreManager = new ScoreManager();
+        timerManager = new TimerManager();
 
         int holeWidth = HOLE_WIDTH;
         int holeHeight = HOLE_HEIGHT;
@@ -194,6 +194,13 @@ public class GameView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
+        timerManager.update();
+        timerManager.draw(canvas);
+        if (timerManager.isTimeUp()) {
+            //showLevelCompleteDialog();
+            timerManager.resetTimer();
+            //isGameActive = false;
+        }
         for (int row = 0; row < Constants.NUM_ROWS; row++) {
             for (int col = 0; col < Constants.NUM_COLUMNS; col++) {
 
@@ -208,19 +215,22 @@ public class GameView extends View {
 
                 HoleFront holeFront = holesFront.get(row * Constants.NUM_COLUMNS + col);
                 holeFront.draw(canvas);
+
                 hammer.draw(canvas);
+                health.draw(canvas);
+                scoreManager.draw(canvas);
 
-                Paint paintHealth = new Paint();
-                paintHealth.setColor(Color.WHITE);
-                paintHealth.setTextSize(50);
-                String healthText = "Health: " + health.getCurrentHealth();
-                canvas.drawText(healthText, 50, 50, paintHealth);
+//                Paint paintHealth = new Paint();
+//                paintHealth.setColor(Color.WHITE);
+//                paintHealth.setTextSize(50);
+//                String healthText = "Health: " + health.getCurrentHealth();
+//                canvas.drawText(healthText, 50, 50, paintHealth);
 
-                Paint paintScore = new Paint();
-                paintScore.setColor(Color.WHITE);
-                paintScore.setTextSize(50);
-                String scoreText = "Score: " + scoreManager.getScore();
-                canvas.drawText(scoreText, getWidth() - 250, 50, paintScore);
+//                Paint paintScore = new Paint();
+//                paintScore.setColor(Color.WHITE);
+//                paintScore.setTextSize(50);
+//                String scoreText = "Score: " + scoreManager.getScore();
+//                canvas.drawText(scoreText, getWidth() - 250, 50, paintScore);
             }
         }
     }
