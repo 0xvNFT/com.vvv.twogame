@@ -9,6 +9,7 @@ import static com.vvv.twogame.gametwo.Constants.HOLE_FRONT_HEIGHT;
 import static com.vvv.twogame.gametwo.Constants.HOLE_FRONT_WIDTH;
 import static com.vvv.twogame.gametwo.Constants.HOLE_HEIGHT;
 import static com.vvv.twogame.gametwo.Constants.HOLE_WIDTH;
+import static com.vvv.twogame.gametwo.Constants.MAX_HEALTH;
 import static com.vvv.twogame.gametwo.Constants.MOLE_HEIGHT;
 import static com.vvv.twogame.gametwo.Constants.MOLE_WIDTH;
 import static com.vvv.twogame.gametwo.Constants.NUM_COLUMNS;
@@ -19,6 +20,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
@@ -41,6 +44,7 @@ public class GameView extends View {
     private final Runnable moleRunnable;
     private final Runnable bombRunnable;
     private final Hammer hammer;
+    private final HealthManager healthManager;
 
 
     public GameView(Context context, AttributeSet attrs) {
@@ -71,6 +75,7 @@ public class GameView extends View {
         Bitmap bombBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.bomb);
         Bitmap hammerBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.hammer);
         hammer = new Hammer(hammerBitmap, hammerWidth, hammerHeight);
+        healthManager = new HealthManager(MAX_HEALTH);
 
         holes = new ArrayList<>();
         moles = new ArrayList<>();
@@ -203,6 +208,11 @@ public class GameView extends View {
                 hammer.draw(canvas);
             }
         }
+        Paint paint = new Paint();
+        paint.setColor(Color.WHITE);
+        paint.setTextSize(50);
+        String healthText = "Health: " + healthManager.getCurrentHealth();
+        canvas.drawText(healthText, 50, 50, paint);
     }
 
     @Override
@@ -223,6 +233,7 @@ public class GameView extends View {
             for (Bomb bomb : bombs) {
                 if (bomb.contains(touchX, touchY)) {
                     bomb.detonate();
+                    healthManager.reduceHealth();
                     invalidate();
                 }
             }

@@ -30,7 +30,6 @@ public class Bomb extends GameObject {
 
     public void detonate() {
         isVisible = false;
-        // Perform bomb detonation logic here
     }
 
     public void draw(Canvas canvas) {
@@ -40,13 +39,11 @@ public class Bomb extends GameObject {
     }
 
     public boolean contains(float touchX, float touchY) {
-        // Calculate the bounds of the bomb for touch detection
         int left = x;
         int right = x + BOMB_WIDTH;
         int top = y;
         int bottom = y + BOMB_HEIGHT;
 
-        // Check if the touch coordinates are within the bounds of the bomb
         return touchX >= left && touchX <= right && touchY >= top && touchY <= bottom;
     }
 

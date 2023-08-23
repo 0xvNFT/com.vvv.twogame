@@ -15,6 +15,8 @@ public class Constants {
     public static final int BOMB_HEIGHT = 100;
     public static final int HAMMER_WIDTH = 150;
     public static final int HAMMER_HEIGHT = 120;
+    public static final int MAX_HEALTH = 5;
+    public static final int MIN_HEALTH = 0;
 
 
 }
