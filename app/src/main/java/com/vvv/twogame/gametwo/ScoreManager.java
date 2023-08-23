@@ -5,7 +5,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 
 public class ScoreManager {
-    private int score;
+    private static int score;
 
     public ScoreManager() {
         score = 0;
@@ -19,7 +19,7 @@ public class ScoreManager {
         canvas.drawText(scoreText, canvas.getWidth() - 250, 50, paintScore);
     }
 
-    public int getScore() {
+    public static int getScore() {
         return score;
     }
 

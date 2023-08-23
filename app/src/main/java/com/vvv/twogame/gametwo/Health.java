@@ -34,5 +34,9 @@ public class Health {
     public void resetHealth() {
         currentHealth = maxHealth;
     }
+
+    public int getHealth() {
+        return getCurrentHealth();
+    }
 }
 

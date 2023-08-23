@@ -5,27 +5,24 @@ import android.content.DialogInterface;
 
 import androidx.appcompat.app.AlertDialog;
 
-public class LevelCompleteDialog {
+public class ShowRulesDialog {
     private final Context context;
-    private final int score;
     private final DialogInterface.OnClickListener onProceedClickListener;
 
-    public LevelCompleteDialog(Context context, int score, DialogInterface.OnClickListener onProceedClickListener) {
+    public ShowRulesDialog(Context context, DialogInterface.OnClickListener onProceedClickListener) {
         this.context = context;
-        this.score = score;
         this.onProceedClickListener = onProceedClickListener;
     }
 
     public void show() {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("Level Complete")
-                .setMessage("Your Score: " + score)
-                .setPositiveButton("Proceed to Next Level", onProceedClickListener)
-                .setCancelable(false);
+        builder.setTitle("Game Rules");
+        builder.setMessage("Survive until the timer reaches 0. \n Shoot the enemies and dodge them to survive. \n" +
+                "You only have 5 lives. \n" + "Good luck!");
+
+        builder.setPositiveButton("Start Game", onProceedClickListener);
 
         AlertDialog dialog = builder.create();
         dialog.show();
     }
 }
-
-

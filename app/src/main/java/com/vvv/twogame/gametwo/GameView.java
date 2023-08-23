@@ -16,7 +16,10 @@ import static com.vvv.twogame.gametwo.Constants.NUM_COLUMNS;
 import static com.vvv.twogame.gametwo.Constants.NUM_ROWS;
 import static com.vvv.twogame.gametwo.Constants.ROW_SPACING;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -46,12 +49,17 @@ public class GameView extends View {
     private final Health health;
     private final ScoreManager scoreManager;
     private final TimerManager timerManager;
+    private boolean isGameActive = false;
+    private boolean isRulesDialogShown = false;
+    private boolean canMoveBomb = false;
+    private boolean canMoveMole = false;
 
     public GameView(Context context, AttributeSet attrs) {
         super(context, attrs);
         DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
         int screenWidth = displayMetrics.widthPixels;
         int screenHeight = displayMetrics.heightPixels;
+        showRulesDialog();
 
         health = new Health(MAX_HEALTH);
         scoreManager = new ScoreManager();
@@ -194,45 +202,36 @@ public class GameView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        timerManager.update();
-        timerManager.draw(canvas);
-        if (timerManager.isTimeUp()) {
-            //showLevelCompleteDialog();
-            timerManager.resetTimer();
-            //isGameActive = false;
-        }
-        for (int row = 0; row < Constants.NUM_ROWS; row++) {
-            for (int col = 0; col < Constants.NUM_COLUMNS; col++) {
+        if (isRulesDialogShown && isGameActive) {
+            timerManager.update();
+            timerManager.draw(canvas);
+            if (timerManager.isTimeUp()) {
+                showLevelCompleteDialog();
+                timerManager.resetTimer();
+                isGameActive = false;
+            }
+            for (int row = 0; row < Constants.NUM_ROWS; row++) {
+                for (int col = 0; col < Constants.NUM_COLUMNS; col++) {
 
-                Hole hole = holes.get(row * Constants.NUM_COLUMNS + col);
-                hole.draw(canvas);
+                    Hole hole = holes.get(row * Constants.NUM_COLUMNS + col);
+                    hole.draw(canvas);
 
-                Mole mole = moles.get(row * Constants.NUM_COLUMNS + col);
-                mole.draw(canvas);
+                    Mole mole = moles.get(row * Constants.NUM_COLUMNS + col);
+                    mole.draw(canvas);
 
-                Bomb bomb = bombs.get(row * Constants.NUM_COLUMNS + col);
-                bomb.draw(canvas);
+                    Bomb bomb = bombs.get(row * Constants.NUM_COLUMNS + col);
+                    bomb.draw(canvas);
 
-                HoleFront holeFront = holesFront.get(row * Constants.NUM_COLUMNS + col);
-                holeFront.draw(canvas);
+                    HoleFront holeFront = holesFront.get(row * Constants.NUM_COLUMNS + col);
+                    holeFront.draw(canvas);
 
-                hammer.draw(canvas);
-                health.draw(canvas);
-                scoreManager.draw(canvas);
-
-//                Paint paintHealth = new Paint();
-//                paintHealth.setColor(Color.WHITE);
-//                paintHealth.setTextSize(50);
-//                String healthText = "Health: " + health.getCurrentHealth();
-//                canvas.drawText(healthText, 50, 50, paintHealth);
-
-//                Paint paintScore = new Paint();
-//                paintScore.setColor(Color.WHITE);
-//                paintScore.setTextSize(50);
-//                String scoreText = "Score: " + scoreManager.getScore();
-//                canvas.drawText(scoreText, getWidth() - 250, 50, paintScore);
+                    hammer.draw(canvas);
+                    health.draw(canvas);
+                    scoreManager.draw(canvas);
+                }
             }
         }
+        invalidate();
     }
 
     @Override
@@ -261,10 +260,54 @@ public class GameView extends View {
                     Log.d("GameView", "Health reduced due to bomb hit");
                 }
             }
+            if (health.getHealth() <= 0) {
+                showGameOverDialog(ScoreManager.getScore());
+                isGameActive = false;
+            }
+
         } else if (action == MotionEvent.ACTION_UP) {
             hammer.hide();
             invalidate();
         }
         return true;
+    }
+
+    private void showRulesDialog() {
+        DialogInterface.OnClickListener onProceedClickListener = (dialog, which) -> {
+            isRulesDialogShown = true;
+            isGameActive = true;
+            canMoveBomb = true;
+            canMoveMole = true;
+            Log.d("GameView", "Start Game button clicked. Rules shown: " + true + ", Game active: " + true);
+
+        };
+        com.vvv.twogame.gametwo.ShowRulesDialog dialog = new ShowRulesDialog(getContext(), onProceedClickListener);
+        dialog.show();
+    }
+
+    private void showLevelCompleteDialog() {
+
+        DialogInterface.OnClickListener onProceedClickListener = (dialog, which) -> {
+            ((Activity) getContext()).finish();
+
+            Intent intent = new Intent(getContext(), WhackAMoleActivity.class);
+            getContext().startActivity(intent);
+            isGameActive = true;
+        };
+
+        com.vvv.twogame.gametwo.LevelCompleteDialog dialog = new com.vvv.twogame.gametwo.LevelCompleteDialog(getContext(), ScoreManager.getScore(), onProceedClickListener);
+        dialog.show();
+    }
+
+    private void showGameOverDialog(int finalScore) {
+        DialogInterface.OnClickListener onRestartClickListener = (dialog, which) -> resetGame();
+        com.vvv.twogame.gametwo.GameOverDialog dialog = new GameOverDialog(getContext(), onRestartClickListener);
+        dialog.show(finalScore);
+    }
+
+    private void resetGame() {
+        ((Activity) getContext()).finish();
+        Intent intent = new Intent(getContext(), WhackAMoleActivity.class);
+        getContext().startActivity(intent);
     }
 }
