@@ -25,6 +25,7 @@ import android.graphics.Paint;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -44,7 +45,7 @@ public class GameView extends View {
     private final Runnable moleRunnable;
     private final Runnable bombRunnable;
     private final Hammer hammer;
-    private final HealthManager healthManager;
+    private final Health health;
 
 
     public GameView(Context context, AttributeSet attrs) {
@@ -52,6 +53,7 @@ public class GameView extends View {
         DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
         int screenWidth = displayMetrics.widthPixels;
         int screenHeight = displayMetrics.heightPixels;
+        health = new Health(MAX_HEALTH);
 
         int holeWidth = HOLE_WIDTH;
         int holeHeight = HOLE_HEIGHT;
@@ -75,7 +77,6 @@ public class GameView extends View {
         Bitmap bombBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.bomb);
         Bitmap hammerBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.hammer);
         hammer = new Hammer(hammerBitmap, hammerWidth, hammerHeight);
-        healthManager = new HealthManager(MAX_HEALTH);
 
         holes = new ArrayList<>();
         moles = new ArrayList<>();
@@ -206,13 +207,14 @@ public class GameView extends View {
                 HoleFront holeFront = holesFront.get(row * Constants.NUM_COLUMNS + col);
                 holeFront.draw(canvas);
                 hammer.draw(canvas);
+
+                Paint paint = new Paint();
+                paint.setColor(Color.WHITE);
+                paint.setTextSize(50);
+                String healthText = "Health: " + health.getCurrentHealth();
+                canvas.drawText(healthText, 50, 50, paint);
             }
         }
-        Paint paint = new Paint();
-        paint.setColor(Color.WHITE);
-        paint.setTextSize(50);
-        String healthText = "Health: " + healthManager.getCurrentHealth();
-        canvas.drawText(healthText, 50, 50, paint);
     }
 
     @Override
@@ -223,6 +225,7 @@ public class GameView extends View {
             float touchY = event.getY();
 
             hammer.show((int) touchX, (int) touchY);
+            Log.d("GameView", "Touch coordinates: x=" + touchX + ", y=" + touchY);
 
             for (Mole mole : moles) {
                 if (mole.contains(touchX, touchY)) {
@@ -231,10 +234,11 @@ public class GameView extends View {
                 }
             }
             for (Bomb bomb : bombs) {
-                if (bomb.contains(touchX, touchY)) {
+                if (bomb.contains(touchX, touchY) && bomb.isVisible()) {
                     bomb.detonate();
-                    healthManager.reduceHealth();
                     invalidate();
+                    health.reduceHealth();
+                    Log.d("GameView", "Health reduced due to bomb hit");
                 }
             }
         } else if (action == MotionEvent.ACTION_UP) {

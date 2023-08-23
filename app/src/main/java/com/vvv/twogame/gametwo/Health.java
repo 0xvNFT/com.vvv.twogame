@@ -1,10 +1,10 @@
 package com.vvv.twogame.gametwo;
 
-public class HealthManager {
+public class Health {
     private final int maxHealth;
     private int currentHealth;
 
-    public HealthManager(int maxHealth) {
+    public Health(int maxHealth) {
         this.maxHealth = maxHealth;
         this.currentHealth = maxHealth;
     }
@@ -19,7 +19,8 @@ public class HealthManager {
         }
     }
 
-    public boolean isAlive() {
-        return currentHealth > 0;
+    public void resetHealth() {
+        currentHealth = maxHealth;
     }
 }
+
