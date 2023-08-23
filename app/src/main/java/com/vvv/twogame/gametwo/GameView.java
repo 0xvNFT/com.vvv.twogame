@@ -46,6 +46,7 @@ public class GameView extends View {
     private final Runnable bombRunnable;
     private final Hammer hammer;
     private final Health health;
+    private final ScoreManager scoreManager;
 
 
     public GameView(Context context, AttributeSet attrs) {
@@ -54,6 +55,7 @@ public class GameView extends View {
         int screenWidth = displayMetrics.widthPixels;
         int screenHeight = displayMetrics.heightPixels;
         health = new Health(MAX_HEALTH);
+        scoreManager = new ScoreManager();
 
         int holeWidth = HOLE_WIDTH;
         int holeHeight = HOLE_HEIGHT;
@@ -208,11 +210,17 @@ public class GameView extends View {
                 holeFront.draw(canvas);
                 hammer.draw(canvas);
 
-                Paint paint = new Paint();
-                paint.setColor(Color.WHITE);
-                paint.setTextSize(50);
+                Paint paintHealth = new Paint();
+                paintHealth.setColor(Color.WHITE);
+                paintHealth.setTextSize(50);
                 String healthText = "Health: " + health.getCurrentHealth();
-                canvas.drawText(healthText, 50, 50, paint);
+                canvas.drawText(healthText, 50, 50, paintHealth);
+
+                Paint paintScore = new Paint();
+                paintScore.setColor(Color.WHITE);
+                paintScore.setTextSize(50);
+                String scoreText = "Score: " + scoreManager.getScore();
+                canvas.drawText(scoreText, getWidth() - 250, 50, paintScore);
             }
         }
     }
@@ -228,8 +236,9 @@ public class GameView extends View {
             Log.d("GameView", "Touch coordinates: x=" + touchX + ", y=" + touchY);
 
             for (Mole mole : moles) {
-                if (mole.contains(touchX, touchY)) {
+                if (mole.contains(touchX, touchY) && mole.isVisible()) {
                     mole.whack();
+                    scoreManager.increaseScore();
                     invalidate();
                 }
             }
@@ -238,6 +247,7 @@ public class GameView extends View {
                     bomb.detonate();
                     invalidate();
                     health.reduceHealth();
+                    scoreManager.decreaseScore();
                     Log.d("GameView", "Health reduced due to bomb hit");
                 }
             }
