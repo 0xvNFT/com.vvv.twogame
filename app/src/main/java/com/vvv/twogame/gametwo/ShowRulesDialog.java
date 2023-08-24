@@ -17,7 +17,7 @@ public class ShowRulesDialog {
     public void show() {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Game Rules");
-        builder.setMessage("Survive until the timer reaches 0. \n Shoot the enemies and dodge them to survive. \n" +
+        builder.setMessage("Hit the moles with hammer and avoid hitting the bombs. \n Wait until the timer reaches 0 to proceed to next level. \n" +
                 "You only have 5 lives. \n" + "Good luck!");
 
         builder.setPositiveButton("Start Game", onProceedClickListener);

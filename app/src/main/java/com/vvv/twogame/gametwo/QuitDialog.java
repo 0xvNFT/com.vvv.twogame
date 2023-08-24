@@ -16,7 +16,7 @@ public class QuitDialog {
     public void show() {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Quit Game");
-        builder.setMessage("Do you want to quit?");
+        builder.setMessage("Do you want to quit the game?");
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
