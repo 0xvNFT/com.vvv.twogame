@@ -43,7 +43,6 @@ public class WhackAMoleActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        onPause();
         gameView.onBackPressed();
     }
 

@@ -60,6 +60,7 @@ public class GameView extends View implements QuitDialogListener {
     private boolean isRulesDialogShown = false;
     private boolean fireProjectiles = false;
     private boolean canSpawnEnemies = false;
+    private boolean isGamePaused = false;
 
 
     public GameView(Context context, AttributeSet attrs) {
@@ -153,7 +154,7 @@ public class GameView extends View implements QuitDialogListener {
     @Override
     protected void onDraw(@NonNull Canvas canvas) {
         super.onDraw(canvas);
-        if (isRulesDialogShown && isGameActive) {
+        if (isRulesDialogShown && isGameActive && !isGamePaused) {
             scoreManager.drawScore(canvas);
             timerManager.update();
             timerManager.draw(canvas);
@@ -313,7 +314,6 @@ public class GameView extends View implements QuitDialogListener {
     }
 
     private void showLevelCompleteDialog() {
-
         DialogInterface.OnClickListener onProceedClickListener = (dialog, which) -> {
             ((Activity) getContext()).finish();
 
@@ -345,12 +345,12 @@ public class GameView extends View implements QuitDialogListener {
 
     @Override
     public void onCancel() {
-
+        isGamePaused = false;
     }
 
     @Override
     public void onBackPressed() {
-
+        isGamePaused = true;
         QuitDialog quitDialog = new QuitDialog(this.getContext(), this);
         quitDialog.show();
 
