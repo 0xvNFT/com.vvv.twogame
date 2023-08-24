@@ -36,7 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class GameView extends View {
+public class GameView extends View implements QuitDialogListener {
     private final List<Hole> holes;
     private final List<HoleFront> holesFront;
     private final List<Mole> moles;
@@ -51,8 +51,6 @@ public class GameView extends View {
     private final TimerManager timerManager;
     private boolean isGameActive = false;
     private boolean isRulesDialogShown = false;
-    private boolean canMoveBomb = false;
-    private boolean canMoveMole = false;
 
     public GameView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -276,8 +274,6 @@ public class GameView extends View {
         DialogInterface.OnClickListener onProceedClickListener = (dialog, which) -> {
             isRulesDialogShown = true;
             isGameActive = true;
-            canMoveBomb = true;
-            canMoveMole = true;
             Log.d("GameView", "Start Game button clicked. Rules shown: " + true + ", Game active: " + true);
 
         };
@@ -309,5 +305,21 @@ public class GameView extends View {
         ((Activity) getContext()).finish();
         Intent intent = new Intent(getContext(), WhackAMoleActivity.class);
         getContext().startActivity(intent);
+    }
+
+    @Override
+    public void onQuitConfirmed() {
+        ((Activity) getContext()).finish();
+    }
+
+    @Override
+    public void onCancel() {
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        QuitDialog quitDialog = new QuitDialog(this.getContext(), this);
+        quitDialog.show();
     }
 }

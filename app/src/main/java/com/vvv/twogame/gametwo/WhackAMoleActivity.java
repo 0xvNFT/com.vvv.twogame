@@ -8,6 +8,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.vvv.twogame.R;
 
 public class WhackAMoleActivity extends AppCompatActivity {
+    private GameView gameView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -21,6 +23,7 @@ public class WhackAMoleActivity extends AppCompatActivity {
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
         setContentView(R.layout.activity_whackamole);
         //setContentView(new GameView(this, null));
+        gameView = findViewById(R.id.gameViewGameTwo);
     }
 
     @Override
@@ -37,4 +40,12 @@ public class WhackAMoleActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
     }
+
+    @Override
+    public void onBackPressed() {
+        onPause();
+        gameView.onBackPressed();
+    }
+
+
 }

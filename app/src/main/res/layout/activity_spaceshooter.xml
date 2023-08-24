@@ -5,6 +5,7 @@
     android:background="@drawable/galaxy_bg">
 
     <com.vvv.twogame.gameone.GameView
+        android:id="@+id/gameViewGameOne"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 

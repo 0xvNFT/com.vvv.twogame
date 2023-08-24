@@ -9,6 +9,7 @@ import com.vvv.twogame.R;
 
 public class SpaceShooterActivity extends AppCompatActivity {
     private int score;
+    private GameView gameView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,8 +23,8 @@ public class SpaceShooterActivity extends AppCompatActivity {
                         | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
         setContentView(R.layout.activity_spaceshooter);
-
         //setContentView(new GameView(this, null));
+        gameView = findViewById(R.id.gameViewGameOne);
     }
 
     public void increaseScore(int points) {
@@ -45,5 +46,10 @@ public class SpaceShooterActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+    }
+
+    @Override
+    public void onBackPressed() {
+        gameView.onBackPressed();
     }
 }

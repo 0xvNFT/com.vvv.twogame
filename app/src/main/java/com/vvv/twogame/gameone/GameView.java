@@ -42,7 +42,7 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
-public class GameView extends View {
+public class GameView extends View implements QuitDialogListener {
     public final Paint scorePaint;
     private final Player player;
     private final Bitmap[] projectileImages;
@@ -336,5 +336,23 @@ public class GameView extends View {
         ((Activity) getContext()).finish();
         Intent intent = new Intent(getContext(), SpaceShooterActivity.class);
         getContext().startActivity(intent);
+    }
+
+    @Override
+    public void onQuitConfirmed() {
+        ((Activity) getContext()).finish();
+    }
+
+    @Override
+    public void onCancel() {
+
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        QuitDialog quitDialog = new QuitDialog(this.getContext(), this);
+        quitDialog.show();
+
     }
 }

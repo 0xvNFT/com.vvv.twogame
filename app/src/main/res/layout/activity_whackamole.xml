@@ -5,6 +5,7 @@
     android:background="@drawable/wam_bg">
 
     <com.vvv.twogame.gametwo.GameView
+        android:id="@+id/gameViewGameTwo"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
